@@ -1,4 +1,4 @@
 from . import readers
 from . import interactions
 from . import viewers
-from . import converter
+from .converter
