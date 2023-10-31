@@ -330,10 +330,4 @@ def create_df_from_binding_site(selected_site_interactions, interaction_type="hb
     )
     return df
 
-def pdbqt2pdb(pdbqt, pdb):
-    qt = f"obabel -ipdbqt {pdbqt} -opdb -O{pdb}"
-    subprocess.run(qt, shell=True)
-    
-def pdbqt2sdf(pdbqt, sdf):
-    qt = f"obabel -ipdbqt {pdbqt} -osdf -O{sdf}"
-    subprocess.run(qt, shell=True)
+
