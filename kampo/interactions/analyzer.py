@@ -6,17 +6,20 @@ import numpy as np
 import openbabel
 import pandas as pd
 from pathlib import Path
+from rdkit import Chem
 import time
 import warnings
 import subprocess
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-#import nglview as nv
-#import MDAnalysis as mda
-#from MDAnalysis.analysis import rms, diffusionmap, align
-#from MDAnalysis.analysis.distances import dist
-#from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
+import tempfile
+
+# import nglview as nv
+# import MDAnalysis as mda
+# from MDAnalysis.analysis import rms, diffusionmap, align
+# from MDAnalysis.analysis.distances import dist
+# from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
 
 warnings.filterwarnings("ignore")
 
@@ -235,9 +238,19 @@ def rmsd_for_atomgroups(universe, selection1, selection2=None):
 
 '''
 
+
+def retrieve_plip_interactions_from_mol(pdb_mol):
+    temp_file = tempfile.NamedTemporaryFile(
+        mode='w+', delete=False, suffix='.pdb')
+    Chem.MolToPDBFile(pdb_mol, temp_file.name)
+    return retrieve_plip_interactions(temp_file.name)
+
+
 '''
 reference: https://projects.volkamerlab.org/teachopencadd/all_talktorials.html
 '''
+
+
 def retrieve_plip_interactions(pdb_file):
     """
     Retrieves the interactions from PLIP.
@@ -329,5 +342,3 @@ def create_df_from_binding_site(selected_site_interactions, interaction_type="hb
         columns=selected_site_interactions[interaction_type][0],
     )
     return df
-
-

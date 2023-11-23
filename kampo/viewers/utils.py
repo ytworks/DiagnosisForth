@@ -1,6 +1,87 @@
 from ..interactions import analyzer
 import pandas as pd
 import py3Dmol
+import tempfile
+from rdkit import Chem
+from rdkit.Chem import ChemicalFeatures
+from rdkit.Chem import AllChem
+from rdkit import RDConfig
+import os
+
+
+pharmacophore_colors = {
+    "Donor": (0, 255, 0),        # 緑色
+    "Acceptor": (255, 0, 0),     # 赤色
+    "NegIonizable": (0, 0, 255),  # 青色
+    "PosIonizable": (255, 255, 0),  # 黄色
+    "Aromatic": (128, 0, 128),   # 紫色
+    "ZnBinder": (0, 255, 255),   # シアン色
+    "Hydrophobe": (255, 165, 0),  # オレンジ色
+    "LumpedHydrophobe": (255, 105, 180)  # ピンク色
+}
+
+
+def show_3d_interactions_from_mol(pdb_mol, ligand_name='UNL'):
+    temp_file = tempfile.NamedTemporaryFile(
+        mode='w+', delete=False, suffix='.pdb')
+    Chem.MolToPDBFile(pdb_mol, temp_file.name)
+    return show_3d_interactions(temp_file.name, ligand_name)
+
+
+def view_pharmacophore_from_mol(pdb_mol,
+                                smiles='O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
+                                ligand_name="LIG"):
+    view, complete_dfs = show_3d_interactions_from_mol(pdb_mol, ligand_name)
+    temp_file = tempfile.NamedTemporaryFile(
+        mode='w+', delete=False, suffix='.pdb')
+    Chem.MolToPDBFile(pdb_mol, temp_file.name)
+    ligand_mol = extract_ligand_from_pdb(temp_file.name,
+                                         smiles=smiles,
+                                         residue_name=ligand_name)
+    pcos = extract_pharmacophore(ligand_mol=ligand_mol)
+    view = add_sphere(view, pcos)
+    return view, complete_dfs
+
+
+def add_sphere(view, pcos):
+    for pco in pcos:
+        color = pharmacophore_colors[pco[0]]
+        view.addSphere({'center': {'x': pco[3], 'y': pco[4], 'z': pco[5]},
+                        'radius': 0.5,
+                        'color': f'rgb({color[0]},{color[1]},{color[2]})'})
+    return view
+
+
+def view_pharmacophore(pdb_file,
+                       smiles='O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
+                       ligand_name="LIG"):
+    view, complete_dfs = show_3d_interactions(pdb_file, ligand_name)
+    ligand_mol = extract_ligand_from_pdb(pdb_file,
+                                         smiles=smiles,
+                                         residue_name=ligand_name)
+    pcos = extract_pharmacophore(ligand_mol=ligand_mol)
+    view = add_sphere(view, pcos)
+    return view, complete_dfs
+
+
+def extract_ligand_from_pdb(pdb_file, smiles='O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
+                            residue_name="LIG"):
+    mol = Chem.MolFromPDBFile(pdb_file, removeHs=False)
+    ligand_atoms = [atom.GetIdx() for atom in mol.GetAtoms(
+    ) if atom.GetPDBResidueInfo().GetResidueName() == residue_name]
+
+    # リガンド原子のみを含むサブモレキュールを作成
+    ligand = Chem.RWMol(mol)
+    ligand_atoms_set = set(ligand_atoms)
+    for atom_idx in reversed(range(ligand.GetNumAtoms())):
+        if atom_idx not in ligand_atoms_set:
+            ligand.RemoveAtom(atom_idx)
+    lig = ligand.GetMol()
+    reference_mol = Chem.MolFromSmiles(smiles)
+    ligand_mol = AllChem.AssignBondOrdersFromTemplate(
+        reference_mol, lig)
+    ligand_mol.AddConformer(lig.GetConformer(0))
+    return ligand_mol
 
 
 def show_3d_interactions(pdb_file, ligand_name='UNL'):
@@ -46,7 +127,7 @@ def show_3d_interactions(pdb_file, ligand_name='UNL'):
     view.setStyle({"cartoon": {"color": "grey"}})
     LIG = [ligand_name]
     view.addStyle({'and': [{'resn': LIG}]},
-                  {'stick': {'colorscheme': 'greenCarbon', 'radius': 0.3}})
+                  {'stick': {'colorscheme': 'magentaCarbon', 'radius': 0.3}})
     view.setViewStyle({'style': 'outline', 'color': 'black', 'width': 0.1})
     for idx, rows in df.iterrows():
         view.setStyle({'resi': rows["RESNR"]},
@@ -65,3 +146,16 @@ def show_3d_interactions(pdb_file, ligand_name='UNL'):
 
     view.zoomTo()
     return view, complete_dfs
+
+
+def extract_pharmacophore(ligand_mol):
+    fdefName = os.path.join(RDConfig.RDDataDir, 'BaseFeatures.fdef')
+    factory = ChemicalFeatures.BuildFeatureFactory(fdefName)
+
+    pcos = []
+
+    feats = factory.GetFeaturesForMol(ligand_mol)
+    for i in range(len(feats)):
+        pcos.append([feats[i].GetFamily(), feats[i].GetType(), feats[i].GetAtomIds(),
+                    feats[i].GetPos()[0], feats[i].GetPos()[1], feats[i].GetPos()[2]])
+    return pcos
