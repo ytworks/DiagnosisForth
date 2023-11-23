@@ -40,7 +40,10 @@ def view_pharmacophore_from_mol(pdb_mol,
                                          residue_name=ligand_name)
     pcos = extract_pharmacophore(ligand_mol=ligand_mol)
     view = add_sphere(view, pcos)
-    return view, complete_dfs
+    df = pd.DataFrame(
+        pcos, columns=['Type', 'Detail', 'AtomNumber', 'X', 'Y', 'Z'])
+
+    return view, complete_dfs, df
 
 
 def add_sphere(view, pcos):
@@ -61,7 +64,9 @@ def view_pharmacophore(pdb_file,
                                          residue_name=ligand_name)
     pcos = extract_pharmacophore(ligand_mol=ligand_mol)
     view = add_sphere(view, pcos)
-    return view, complete_dfs
+    df = pd.DataFrame(
+        pcos, columns=['Type', 'Detail', 'AtomNumber', 'X', 'Y', 'Z'])
+    return view, complete_dfs, df
 
 
 def extract_ligand_from_pdb(pdb_file, smiles='O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
