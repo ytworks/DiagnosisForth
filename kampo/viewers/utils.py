@@ -51,7 +51,18 @@ def add_sphere(view, pcos):
         color = pharmacophore_colors[pco[0]]
         view.addSphere({'center': {'x': pco[3], 'y': pco[4], 'z': pco[5]},
                         'radius': 0.5,
-                        'color': f'rgb({color[0]},{color[1]},{color[2]})'})
+                        'color': f'rgb({color[0]},{color[1]},{color[2]})',
+                        "hoverable": True,
+                        "hover_callback": '''function(atom,viewer,event,container) {
+                                                if(!this.label) {
+                                                    this.label = viewer.addLabel("%s = (%s, %s, %s)",{position: this, backgroundColor: 'mintcream', fontColor:'black'});
+                                            }}''' % (pco[0], pco[3], pco[4], pco[5]),
+                        "unhover_callback": '''function(atom,viewer) { 
+                                    if(this.label) {
+                                        viewer.removeLabel(this.label);
+                                        delete this.label;
+                                    }
+                                    }'''})
     return view
 
 
@@ -130,6 +141,7 @@ def show_3d_interactions(pdb_file, ligand_name='UNL'):
     view = py3Dmol.view()
     view.addModel(open(pdb_file, 'r').read(), 'pdb')
     view.setStyle({"cartoon": {"color": "grey"}})
+    view = hover_atom(view)
     LIG = [ligand_name]
     view.addStyle({'and': [{'resn': LIG}]},
                   {'stick': {'colorscheme': 'magentaCarbon', 'radius': 0.3}})
@@ -146,6 +158,17 @@ def show_3d_interactions(pdb_file, ligand_name='UNL'):
                           "dashed": True,
                           "fromCap": 1,
                           "toCap": 1,
+                          "hoverable": True,
+                          "hover_callback": '''function(atom,viewer,event,container) {
+                                                if(!this.label) {
+                                                    this.label = viewer.addLabel("%s",{position: this, backgroundColor: 'mintcream', fontColor:'black'});
+                                            }}''' % rows["BONDTYPE"],
+                          "unhover_callback": '''function(atom,viewer) { 
+                                    if(this.label) {
+                                        viewer.removeLabel(this.label);
+                                        delete this.label;
+                                    }
+                                    }'''
                           })
     view.setViewStyle({'style': 'outline', 'color': 'black', 'width': 0.1})
 
@@ -164,3 +187,18 @@ def extract_pharmacophore(ligand_mol):
         pcos.append([feats[i].GetFamily(), feats[i].GetType(), feats[i].GetAtomIds(),
                     feats[i].GetPos()[0], feats[i].GetPos()[1], feats[i].GetPos()[2]])
     return pcos
+
+
+def hover_atom(view):
+    view.setHoverable({}, True, '''function(atom,viewer,event,container) {
+                   if(!atom.label) {
+                    atom.label = viewer.addLabel(atom.resn+":"+atom.resi,{position: atom, backgroundColor: 'mintcream', fontColor:'black'});
+                   }}''',
+                      '''function(atom,viewer) { 
+                   if(atom.label) {
+                    viewer.removeLabel(atom.label);
+                    delete atom.label;
+                   }
+                }''')
+
+    return view
