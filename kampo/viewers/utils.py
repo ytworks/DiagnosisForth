@@ -100,6 +100,76 @@ def extract_ligand_from_pdb(pdb_file, smiles='O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1cc
     return ligand_mol
 
 
+def show_3d_interactions_for_ppi(pdb_file, chains, src_chain, dst_chain):
+    bond_types = ["hydrophobic",
+                  "hbond",
+                  "waterbridge",
+                  "saltbridge",
+                  "pistacking",
+                  "pication",
+                  "halogen"]
+    colors = {"hydrophobic": "red",
+              "hbond": "blue",
+              "waterbridge": "blueCarbon",
+              "saltbridge": "white",
+              "pistacking": "yellow",
+              "pication": "orange",
+              "halogen": "magenta"}
+    interactions_by_site = analyzer.retrieve_plip_interactions_for_ppi(
+        pdb_file, chains)
+    index_of_selected_site = 0
+    selected_site = list(interactions_by_site.keys())[index_of_selected_site]
+    dfs = []
+    complete_dfs = {}
+    for bond_type in bond_types:
+        df = analyzer.create_df_from_binding_site_for_ppi(
+            interactions_by_site[selected_site],
+            src_chain=src_chain,
+            dst_chain=dst_chain,
+            interaction_type=bond_type)
+        complete_dfs[bond_type] = df
+        df = df[["RESNR", "RESTYPE", "LIGCOO",
+                 "PROTCOO", 'RESNR_LIG', "RESTYPE_LIG"]]
+        df['BONDTYPE'] = bond_type
+        dfs.append(df)
+    df = pd.concat(dfs, axis=0)
+
+    view = py3Dmol.view()
+    view.addModel(open(pdb_file, 'r').read(), 'pdb')
+    view.setStyle({"cartoon": {"color": "grey"}})
+    view = hover_atom(view)
+    for idx, rows in df.iterrows():
+        view.setStyle({'resi': rows["RESNR"]},
+                      {'stick': {'colorscheme': 'greenCarbon', 'radius': 0.2}})
+        view.setStyle({'resi': rows["RESNR_LIG"]},
+                      {'stick': {'colorscheme': 'whiteCarbon', 'radius': 0.2}})
+        sx, sy, sz = rows["LIGCOO"]
+        ex, ey, ez = rows["PROTCOO"]
+        view.addCylinder({"start": dict(x=sx, y=sy, z=sz),
+                          "end":   dict(x=ex, y=ey, z=ez),
+                          "color": colors[rows["BONDTYPE"]],
+                          "radius": .15,
+                          "dashed": True,
+                          "fromCap": 1,
+                          "toCap": 1,
+                          "hoverable": True,
+                          "hover_callback": '''function(atom,viewer,event,container) {
+                                                if(!this.label) {
+                                                    this.label = viewer.addLabel("%s",{position: this, backgroundColor: 'mintcream', fontColor:'black'});
+                                            }}''' % rows["BONDTYPE"],
+                          "unhover_callback": '''function(atom,viewer) { 
+                                    if(this.label) {
+                                        viewer.removeLabel(this.label);
+                                        delete this.label;
+                                    }
+                                    }'''
+                          })
+    view.setViewStyle({'style': 'outline', 'color': 'black', 'width': 0.1})
+
+    view.zoomTo()
+    return view, complete_dfs
+
+
 def show_3d_interactions(pdb_file, ligand_name='UNL'):
     """Show 3D interactions of a complex.
 

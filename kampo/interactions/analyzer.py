@@ -1,5 +1,5 @@
 from plip.exchange.report import BindingSiteReport
-from plip.structure.preparation import PDBComplex
+from plip.structure.preparation import PDBComplex, LigandFinder
 from matplotlib import colors
 import matplotlib.pyplot as plt
 import numpy as np
@@ -251,6 +251,65 @@ reference: https://projects.volkamerlab.org/teachopencadd/all_talktorials.html
 '''
 
 
+def retrieve_plip_interactions_for_ppi(pdb_file, chains):
+    """
+    Retrieves the interactions from PLIP.
+
+    Parameters
+    ----------
+    pdb_file :
+        The PDB file of the complex.
+
+    chains :
+        The chains of the complex.
+
+    Returns
+    -------
+    dict :
+        A dictionary of the binding sites and the interactions.
+    """
+    protlig = PDBComplex()
+    protlig.load_pdb(pdb_file)
+    lf = LigandFinder(protlig.protcomplex, protlig.altconf,
+                      protlig.modres, protlig.covalent, protlig.Mapper)
+    ppiligs = []
+    for chain in chains:
+        ppiligs.append(lf.getpeptides(chain))
+    for ligand in ppiligs:
+        protlig.characterize_complex(ligand)
+
+    sites = {}
+    # loop over binding sites
+    for key, site in sorted(protlig.interaction_sets.items()):
+        # collect data about interactions
+        binding_site = BindingSiteReport(site)
+        # tuples of *_features and *_info will be converted to pandas DataFrame
+        keys = (
+            "hydrophobic",
+            "hbond",
+            "waterbridge",
+            "saltbridge",
+            "pistacking",
+            "pication",
+            "halogen",
+            "metal",
+        )
+        # interactions is a dictionary which contains relevant information for each
+        # of the possible interactions: hydrophobic, hbond, etc. in the considered
+        # binding site. Each interaction contains a list with
+        # 1. the features of that interaction, e.g. for hydrophobic:
+        # ('RESNR', 'RESTYPE', ..., 'LIGCOO', 'PROTCOO')
+        # 2. information for each of these features, e.g. for hydrophobic
+        # (residue nb, residue type,..., ligand atom 3D coord., protein atom 3D coord.)
+        interactions = {
+            k: [getattr(binding_site, k + "_features")] +
+            getattr(binding_site, k + "_info")
+            for k in keys
+        }
+        sites[key] = interactions
+    return sites
+
+
 def retrieve_plip_interactions(pdb_file):
     """
     Retrieves the interactions from PLIP.
@@ -300,6 +359,15 @@ def retrieve_plip_interactions(pdb_file):
         }
         sites[key] = interactions
     return sites
+
+
+def create_df_from_binding_site_for_ppi(selected_site_interactions, src_chain, dst_chain,
+                                        interaction_type="hbond",
+                                        ):
+    df = create_df_from_binding_site(
+        selected_site_interactions, interaction_type=interaction_type)
+    df = df[(df['RESCHAIN'] == src_chain) & (df['RESCHAIN_LIG'] == dst_chain)]
+    return df
 
 
 def create_df_from_binding_site(selected_site_interactions, interaction_type="hbond"):
