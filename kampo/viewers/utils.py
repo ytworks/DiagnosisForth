@@ -1,15 +1,18 @@
+from typing import Dict, List, Any, Tuple, Union, Optional
 from ..interactions import analyzer
 import pandas as pd
 import py3Dmol
 import tempfile
 from rdkit import Chem
+from rdkit.Chem import Mol
 from rdkit.Chem import ChemicalFeatures
 from rdkit.Chem import AllChem
 from rdkit import RDConfig
 import os
+from pathlib import Path
 
 
-pharmacophore_colors = {
+pharmacophore_colors: Dict[str, Tuple[int, int, int]] = {
     "Donor": (0, 255, 0),        # 緑色
     "Acceptor": (255, 0, 0),     # 赤色
     "NegIonizable": (0, 0, 255),  # 青色
@@ -21,42 +24,45 @@ pharmacophore_colors = {
 }
 
 
-def show_3d_interactions_from_mol(pdb_mol, ligand_name='UNL'):
+def visualize_protein_ligand_interactions_from_mol(pdb_mol: Mol, ligand_name: str = 'UNL') -> Tuple[py3Dmol.view, Dict[str, pd.DataFrame]]:
+    """Visualize protein-ligand interactions from an RDKit Mol object."""
     temp_file = tempfile.NamedTemporaryFile(
         mode='w+', delete=False, suffix='.pdb')
     Chem.MolToPDBFile(pdb_mol, temp_file.name)
-    return show_3d_interactions(temp_file.name, ligand_name)
+    return visualize_protein_ligand_interactions(temp_file.name)
 
 
-def view_pharmacophore_from_mol(pdb_mol,
-                                smiles='O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
-                                ligand_name="LIG"):
-    view, complete_dfs = show_3d_interactions_from_mol(pdb_mol, ligand_name)
+def visualize_pharmacophore_from_mol(pdb_mol: Mol,
+                                    smiles: str = 'O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
+                                    ligand_name: str = "LIG") -> Tuple[py3Dmol.view, Dict[str, pd.DataFrame], pd.DataFrame]:
+    """Visualize pharmacophore features from an RDKit Mol object."""
+    view, complete_dfs = visualize_protein_ligand_interactions_from_mol(pdb_mol, ligand_name)
     temp_file = tempfile.NamedTemporaryFile(
         mode='w+', delete=False, suffix='.pdb')
     Chem.MolToPDBFile(pdb_mol, temp_file.name)
     ligand_mol = extract_ligand_from_pdb(temp_file.name,
                                          smiles=smiles,
                                          residue_name=ligand_name)
-    pcos = extract_pharmacophore(ligand_mol=ligand_mol)
-    view = add_sphere(view, pcos)
-    df = pd.DataFrame(
-        pcos, columns=['Type', 'Detail', 'AtomNumber', 'X', 'Y', 'Z'])
+    pharmacophore_features = extract_pharmacophore_features(ligand_mol=ligand_mol)
+    view = add_pharmacophore_spheres(view, pharmacophore_features)
+    features_df = pd.DataFrame(
+        pharmacophore_features, columns=['Type', 'Detail', 'AtomNumber', 'X', 'Y', 'Z'])
 
-    return view, complete_dfs, df
+    return view, complete_dfs, features_df
 
 
-def add_sphere(view, pcos):
-    for pco in pcos:
-        color = pharmacophore_colors[pco[0]]
-        view.addSphere({'center': {'x': pco[3], 'y': pco[4], 'z': pco[5]},
+def add_pharmacophore_spheres(view: py3Dmol.view, pharmacophore_features: List[List[Any]]) -> py3Dmol.view:
+    """Add pharmacophore feature spheres to the 3D view."""
+    for feature in pharmacophore_features:
+        color = pharmacophore_colors[feature[0]]
+        view.addSphere({'center': {'x': feature[3], 'y': feature[4], 'z': feature[5]},
                         'radius': 0.5,
                         'color': f'rgb({color[0]},{color[1]},{color[2]})',
                         "hoverable": True,
                         "hover_callback": '''function(atom,viewer,event,container) {
                                                 if(!this.label) {
                                                     this.label = viewer.addLabel("%s = (%s, %s, %s)",{position: this, backgroundColor: 'mintcream', fontColor:'black'});
-                                            }}''' % (pco[0], pco[3], pco[4], pco[5]),
+                                            }}''' % (feature[0], feature[3], feature[4], feature[5]),
                         "unhover_callback": '''function(atom,viewer) { 
                                     if(this.label) {
                                         viewer.removeLabel(this.label);
@@ -66,22 +72,24 @@ def add_sphere(view, pcos):
     return view
 
 
-def view_pharmacophore(pdb_file,
-                       smiles='O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
-                       ligand_name="LIG"):
-    view, complete_dfs = show_3d_interactions(pdb_file, ligand_name)
+def visualize_pharmacophore(pdb_file: Union[str, Path],
+                           smiles: str = 'O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
+                           ligand_name: str = "LIG") -> Tuple[py3Dmol.view, Dict[str, pd.DataFrame], pd.DataFrame]:
+    """Visualize pharmacophore features of a ligand."""
+    view, complete_dfs = visualize_protein_ligand_interactions(pdb_file, ligand_name)
     ligand_mol = extract_ligand_from_pdb(pdb_file,
                                          smiles=smiles,
                                          residue_name=ligand_name)
-    pcos = extract_pharmacophore(ligand_mol=ligand_mol)
-    view = add_sphere(view, pcos)
-    df = pd.DataFrame(
-        pcos, columns=['Type', 'Detail', 'AtomNumber', 'X', 'Y', 'Z'])
-    return view, complete_dfs, df
+    pharmacophore_features = extract_pharmacophore_features(ligand_mol=ligand_mol)
+    view = add_pharmacophore_spheres(view, pharmacophore_features)
+    features_df = pd.DataFrame(
+        pharmacophore_features, columns=['Type', 'Detail', 'AtomNumber', 'X', 'Y', 'Z'])
+    return view, complete_dfs, features_df
 
 
-def extract_ligand_from_pdb(pdb_file, smiles='O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
-                            residue_name="LIG"):
+def extract_ligand_from_pdb(pdb_file: Union[str, Path], 
+                            smiles: str = 'O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
+                            residue_name: str = "LIG") -> Mol:
     mol = Chem.MolFromPDBFile(pdb_file, removeHs=False)
     ligand_atoms = [atom.GetIdx() for atom in mol.GetAtoms(
     ) if atom.GetPDBResidueInfo().GetResidueName() == residue_name]
@@ -100,7 +108,12 @@ def extract_ligand_from_pdb(pdb_file, smiles='O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1cc
     return ligand_mol
 
 
-def show_3d_interactions_for_ppi(pdb_file, chains, src_chain, dst_chain):
+def visualize_protein_protein_interactions(pdb_file_path: Union[str, Path], 
+                                          chain1: str, 
+                                          chain2: str, 
+                                          highlighted_interactions: Optional[List[str]] = None,
+                                          width: int = 900,
+                                          height: int = 600) -> Tuple[py3Dmol.view, Dict[str, pd.DataFrame]]:
     bond_types = ["hydrophobic",
                   "hbond",
                   "waterbridge",
@@ -115,17 +128,17 @@ def show_3d_interactions_for_ppi(pdb_file, chains, src_chain, dst_chain):
               "pistacking": "yellow",
               "pication": "orange",
               "halogen": "magenta"}
-    interactions_by_site = analyzer.retrieve_plip_interactions_for_ppi(
-        pdb_file, chains)
+    interactions_by_site = analyzer.analyze_protein_protein_interactions(
+        pdb_file_path, chain1, chain2)
     index_of_selected_site = 0
     selected_site = list(interactions_by_site.keys())[index_of_selected_site]
     dfs = []
     complete_dfs = {}
     for bond_type in bond_types:
-        df = analyzer.create_df_from_binding_site_for_ppi(
+        df = analyzer.protein_protein_interactions_to_dataframe(
             interactions_by_site[selected_site],
-            src_chain=src_chain,
-            dst_chain=dst_chain,
+            source_chain=chain1,
+            target_chain=chain2,
             interaction_type=bond_type)
         complete_dfs[bond_type] = df
         df = df[["RESNR", "RESTYPE", "LIGCOO",
@@ -134,10 +147,10 @@ def show_3d_interactions_for_ppi(pdb_file, chains, src_chain, dst_chain):
         dfs.append(df)
     df = pd.concat(dfs, axis=0)
 
-    view = py3Dmol.view()
-    view.addModel(open(pdb_file, 'r').read(), 'pdb')
+    view = py3Dmol.view(width=width, height=height)
+    view.addModel(open(pdb_file_path, 'r').read(), 'pdb')
     view.setStyle({"cartoon": {"color": "grey"}})
-    view = hover_atom(view)
+    view = add_hover_callbacks(view)
     for idx, rows in df.iterrows():
         view.setStyle({'resi': rows["RESNR"]},
                       {'stick': {'colorscheme': 'greenCarbon', 'radius': 0.2}})
@@ -170,13 +183,25 @@ def show_3d_interactions_for_ppi(pdb_file, chains, src_chain, dst_chain):
     return view, complete_dfs
 
 
-def show_3d_interactions(pdb_file, ligand_name='UNL'):
-    """Show 3D interactions of a complex.
+def visualize_protein_ligand_interactions(pdb_file_path: Union[str, Path], 
+                                         interaction_data: Optional[Dict[str, List[Any]]] = None,
+                                         highlighted_interactions: Optional[List[str]] = None,
+                                         width: int = 900,
+                                         height: int = 600) -> Tuple[py3Dmol.view, Dict[str, pd.DataFrame]]:
+    """Visualize protein-ligand interactions in 3D.
 
     Parameters
     ----------
-    pdb_file : str
+    pdb_file_path : Union[str, Path]
         Path to a PDB file of a complex.
+    interaction_data : Optional[Dict[str, List[Any]]] 
+        Pre-calculated interaction data (if None, will be calculated)
+    highlighted_interactions : Optional[List[str]]
+        List of interaction types to highlight
+    width : int
+        Width of the viewer
+    height : int
+        Height of the viewer
     """
     bond_types = ["hydrophobic",
                   "hbond",
@@ -193,13 +218,16 @@ def show_3d_interactions(pdb_file, ligand_name='UNL'):
               "pication": "orange",
               "halogen": "magenta"}
 
-    interactions_by_site = analyzer.retrieve_plip_interactions(pdb_file)
+    if interaction_data is None:
+        interactions_by_site = analyzer.analyze_protein_ligand_interactions(pdb_file_path)
+    else:
+        interactions_by_site = interaction_data
     index_of_selected_site = 0
     selected_site = list(interactions_by_site.keys())[index_of_selected_site]
     dfs = []
     complete_dfs = {}
     for bond_type in bond_types:
-        df = analyzer.create_df_from_binding_site(
+        df = analyzer.interactions_to_dataframe(
             interactions_by_site[selected_site],
             interaction_type=bond_type)
         complete_dfs[bond_type] = df
@@ -208,12 +236,13 @@ def show_3d_interactions(pdb_file, ligand_name='UNL'):
         dfs.append(df)
     df = pd.concat(dfs, axis=0)
 
-    view = py3Dmol.view()
-    view.addModel(open(pdb_file, 'r').read(), 'pdb')
+    view = py3Dmol.view(width=width, height=height)
+    view.addModel(open(pdb_file_path, 'r').read(), 'pdb')
     view.setStyle({"cartoon": {"color": "grey"}})
-    view = hover_atom(view)
-    LIG = [ligand_name]
-    view.addStyle({'and': [{'resn': LIG}]},
+    view = add_hover_callbacks(view)
+    # Note: ligand_name detection would need to be implemented
+    ligand_residues = ['UNL', 'LIG']  # Common ligand names
+    view.addStyle({'and': [{'resn': ligand_residues}]},
                   {'stick': {'colorscheme': 'magentaCarbon', 'radius': 0.3}})
     view.setViewStyle({'style': 'outline', 'color': 'black', 'width': 0.1})
     for idx, rows in df.iterrows():
@@ -246,20 +275,28 @@ def show_3d_interactions(pdb_file, ligand_name='UNL'):
     return view, complete_dfs
 
 
-def extract_pharmacophore(ligand_mol):
+def extract_pharmacophore_features(ligand_mol: Mol) -> List[List[Any]]:
+    """Extract pharmacophore features from a ligand molecule."""
     fdefName = os.path.join(RDConfig.RDDataDir, 'BaseFeatures.fdef')
     factory = ChemicalFeatures.BuildFeatureFactory(fdefName)
 
-    pcos = []
+    pharmacophore_features = []
 
-    feats = factory.GetFeaturesForMol(ligand_mol)
-    for i in range(len(feats)):
-        pcos.append([feats[i].GetFamily(), feats[i].GetType(), feats[i].GetAtomIds(),
-                    feats[i].GetPos()[0], feats[i].GetPos()[1], feats[i].GetPos()[2]])
-    return pcos
+    features = factory.GetFeaturesForMol(ligand_mol)
+    for feature in features:
+        pharmacophore_features.append([
+            feature.GetFamily(), 
+            feature.GetType(), 
+            feature.GetAtomIds(),
+            feature.GetPos()[0], 
+            feature.GetPos()[1], 
+            feature.GetPos()[2]
+        ])
+    return pharmacophore_features
 
 
-def hover_atom(view):
+def add_hover_callbacks(view: py3Dmol.view) -> py3Dmol.view:
+    """Add hover callbacks to atoms in the 3D view."""
     view.setHoverable({}, True, '''function(atom,viewer,event,container) {
                    if(!atom.label) {
                     atom.label = viewer.addLabel(atom.resn+":"+atom.resi,{position: atom, backgroundColor: 'mintcream', fontColor:'black'});

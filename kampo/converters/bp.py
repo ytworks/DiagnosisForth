@@ -1,31 +1,40 @@
 import sys
+from typing import Union
+from pathlib import Path
 from rdkit import Chem
 from Bio import PDB
 
-def getComplex(ligand_file,
-               protein_file,
-               output_file):
 
-    # SDF ファイルから小分子を読み込み
-    suppl = Chem.SDMolSupplier(ligand_file, removeHs=False)
-    ligand = suppl[0]
-    if ligand is None:
+def create_protein_ligand_complex(ligand_path: Union[str, Path],
+                                  protein_path: Union[str, Path],
+                                  output_path: Union[str, Path]) -> None:
+    """Create a protein-ligand complex PDB file from separate protein and ligand files.
+    
+    Parameters
+    ----------
+    ligand_path : Union[str, Path]
+        Path to the ligand file in SDF format
+    protein_path : Union[str, Path]
+        Path to the protein file in PDB format
+    output_path : Union[str, Path]
+        Path for the output complex PDB file
+    """
+    mol_supplier = Chem.SDMolSupplier(str(ligand_path), removeHs=False)
+    ligand_mol = mol_supplier[0]
+    if ligand_mol is None:
         print("Error: Couldn't read ligand.")
         sys.exit(1)
 
-    # PDB ファイルからタンパク質を読み込み
-    parser = PDB.PDBParser(QUIET=True)
-    structure = parser.get_structure('protein', protein_file)
+    pdb_parser = PDB.PDBParser(QUIET=True)
+    protein_structure = pdb_parser.get_structure('protein', str(protein_path))
 
-    # 小分子を PDB 形式に変換
-    ligand_pdb = Chem.MolToPDBBlock(ligand)
+    ligand_pdb_block = Chem.MolToPDBBlock(ligand_mol)
 
-    # タンパク質と小分子を一緒に書き出し
-    with open(output_file, 'w') as f:
-        io = PDB.PDBIO()
-        io.set_structure(structure)
-        io.save(f, write_end=False)  # END レコードを書き出さない
-        f.write('TER\n')  # タンパク質と小分子の間にTERレコードを挿入
-        f.write(ligand_pdb)
+    with open(output_path, 'w') as output_file:
+        pdb_io = PDB.PDBIO()
+        pdb_io.set_structure(protein_structure)
+        pdb_io.save(output_file, write_end=False)
+        output_file.write('TER\n')
+        output_file.write(ligand_pdb_block)
 
-    print("Done! Complex saved to", output_file)
+    print("Done! Complex saved to", output_path)
