@@ -1,9 +1,15 @@
 import subprocess
+from typing import Union
+from pathlib import Path
 
-def pdbqt2pdb(pdbqt, pdb):
-    qt = f"obabel -ipdbqt {pdbqt} -opdb -O{pdb}"
-    subprocess.run(qt, shell=True)
+
+def convert_pdbqt_to_pdb(input_path: Union[str, Path], output_path: Union[str, Path]) -> None:
+    """Convert PDBQT format file to PDB format using OpenBabel."""
+    command = f"obabel -ipdbqt {input_path} -opdb -O{output_path}"
+    subprocess.run(command, shell=True)
     
-def pdbqt2sdf(pdbqt, sdf):
-    qt = f"obabel -ipdbqt {pdbqt} -osdf -O{sdf}"
-    subprocess.run(qt, shell=True)
+
+def convert_pdbqt_to_sdf(input_path: Union[str, Path], output_path: Union[str, Path]) -> None:
+    """Convert PDBQT format file to SDF format using OpenBabel."""
+    command = f"obabel -ipdbqt {input_path} -osdf -O{output_path}"
+    subprocess.run(command, shell=True)
