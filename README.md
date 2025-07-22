@@ -1,49 +1,49 @@
 # Kampo - Drug Discovery Toolkit
 
-Kampo（漢方）は、創薬研究のためのPythonツールキットです。タンパク質-リガンド相互作用解析、ファーマコフォア特徴抽出、分子可視化などの機能を提供します。
+Kampo is a Python toolkit for drug discovery research, providing protein-ligand interaction analysis, pharmacophore feature extraction, and molecular visualization capabilities.
 
-## 主な機能
+## Features
 
-- **タンパク質-リガンド相互作用解析**: PLIPを使用した詳細な相互作用解析
-- **タンパク質-タンパク質相互作用解析**: インターフェース残基の特定と相互作用の可視化
-- **ファーマコフォア特徴抽出**: 分子構造からの薬理学的特徴の抽出
-- **分子形式変換**: PDBQT形式からPDB/SDF形式への変換
-- **3D分子可視化**: py3Dmolを使用したインタラクティブな3D表示
+- **Protein-Ligand Interaction Analysis**: Detailed interaction analysis using PLIP
+- **Protein-Protein Interaction Analysis**: Interface residue identification and interaction visualization
+- **Pharmacophore Feature Extraction**: Extraction of pharmacological features from molecular structures
+- **Molecular Format Conversion**: Conversion from PDBQT to PDB/SDF formats
+- **3D Molecular Visualization**: Interactive 3D display using py3Dmol
 
-## インストール
+## Installation
 
-### 前提条件
+### Prerequisites
 
-- Python 3.8以上
-- OpenBabel（コマンドラインツール）
+- Python 3.8 or higher
+- OpenBabel (command-line tool)
 
-### インストール手順
+### Installation Steps
 
-1. **OpenBabelのインストール**
+1. **Install OpenBabel**
    ```bash
-   # macOSの場合
+   # macOS
    brew install open-babel
    
-   # Ubuntuの場合
+   # Ubuntu
    sudo apt-get install openbabel
    
-   # Condaを使用する場合
+   # Using Conda
    conda install -c conda-forge openbabel
    ```
 
-2. **Kampoのインストール**
+2. **Install Kampo**
    ```bash
-   # リポジトリをクローン
+   # Clone the repository
    git clone https://github.com/yourusername/kampo.git
    cd kampo
    
-   # pipでインストール
+   # Install with pip
    pip install -e .
    ```
 
-## クイックスタート
+## Quick Start
 
-### タンパク質-リガンド相互作用解析
+### Protein-Ligand Interaction Analysis
 
 ```python
 from kampo.converters.obabel import convert_pdbqt_to_sdf
@@ -51,38 +51,38 @@ from kampo.converters.bp import create_protein_ligand_complex
 from kampo.interactions.analyzer import analyze_protein_ligand_interactions
 from kampo.viewers.utils import visualize_protein_ligand_interactions
 
-# PDBQTファイルをSDF形式に変換
+# Convert PDBQT file to SDF format
 convert_pdbqt_to_sdf("ligand.pdbqt", "ligand.sdf")
 
-# タンパク質-リガンド複合体を作成
+# Create protein-ligand complex
 create_protein_ligand_complex(
     ligand_path="ligand.sdf",
     protein_path="protein.pdb",
     output_path="complex.pdb"
 )
 
-# 相互作用を解析
+# Analyze interactions
 interactions = analyze_protein_ligand_interactions("complex.pdb")
 
-# 3Dで可視化
+# Visualize in 3D
 view, tables = visualize_protein_ligand_interactions("complex.pdb")
 view.show()
 ```
 
-### タンパク質-タンパク質相互作用解析
+### Protein-Protein Interaction Analysis
 
 ```python
 from kampo.interactions.analyzer import analyze_protein_protein_interactions
 from kampo.viewers.utils import visualize_protein_protein_interactions
 
-# PPI解析を実行
+# Run PPI analysis
 interface_residues = analyze_protein_protein_interactions(
     "protein_complex.pdb",
     chain_a="A",
     chain_b="B"
 )
 
-# インターフェースを可視化
+# Visualize interface
 view = visualize_protein_protein_interactions(
     "protein_complex.pdb",
     chain_a="A", 
@@ -92,69 +92,69 @@ view = visualize_protein_protein_interactions(
 view.show()
 ```
 
-### ファーマコフォア特徴抽出
+### Pharmacophore Feature Extraction
 
 ```python
 from kampo.interactions.analyzer import extract_pharmacophore_features
 from kampo.viewers.utils import visualize_pharmacophores_from_mol
 
-# 分子からファーマコフォア特徴を抽出
+# Extract pharmacophore features from molecule
 mol = Chem.MolFromSmiles("your_smiles_string")
 features = extract_pharmacophore_features(mol)
 
-# ファーマコフォアを可視化
+# Visualize pharmacophores
 view = visualize_pharmacophores_from_mol(mol, features)
 view.show()
 ```
 
-## サンプルノートブック
+## Example Notebooks
 
-`examples/`ディレクトリに実践的な使用例があります：
+Practical examples are available in the `examples/` directory:
 
-- `plip_example.ipynb`: タンパク質-リガンド相互作用の詳細な解析
-- `pco_example.ipynb`: ファーマコフォア特徴の抽出と可視化
-- `ppi.ipynb`: タンパク質-タンパク質相互作用の解析
+- `plip_example.ipynb`: Detailed protein-ligand interaction analysis
+- `pco_example.ipynb`: Pharmacophore feature extraction and visualization
+- `ppi.ipynb`: Protein-protein interaction analysis
 
-## 依存関係
+## Dependencies
 
-主な依存関係：
-- RDKit: 化学情報処理
-- BioPython: タンパク質構造処理
-- PLIP: タンパク質-リガンド相互作用解析
-- py3Dmol: 3D分子可視化
-- pandas: データ処理
-- numpy: 数値計算
-- matplotlib: グラフ作成
+Main dependencies:
+- RDKit: Chemical informatics
+- BioPython: Protein structure processing
+- PLIP: Protein-ligand interaction profiling
+- py3Dmol: 3D molecular visualization
+- pandas: Data processing
+- numpy: Numerical computing
+- matplotlib: Plotting
 
-## 開発
+## Development
 
-### テストの実行
+### Running Tests
 
 ```bash
-# すべてのテストを実行
+# Run all tests
 pytest tests/
 
-# カバレッジレポート付きで実行
+# Run with coverage report
 pytest tests/ --cov=kampo
 ```
 
-### コードスタイル
+### Code Style
 
-このプロジェクトはBlackとRuffを使用してコードフォーマットとリンティングを行っています：
+This project uses Black and Ruff for code formatting and linting:
 
 ```bash
-# フォーマット
+# Format code
 black kampo/
 
-# リンティング
+# Run linter
 ruff check kampo/
 ```
 
-## ライセンス
+## License
 
-このプロジェクトはMITライセンスの下で公開されています。
+This project is licensed under the GNU General Public License v2.0 - see the [LICENSE](LICENSE) file for details.
 
-## 参考資料
+## References
 
 - [TeachOpenCADD](https://projects.volkamerlab.org/teachopencadd/all_talktorials.html)
 - [PLIP Documentation](https://github.com/pharmai/plip)
