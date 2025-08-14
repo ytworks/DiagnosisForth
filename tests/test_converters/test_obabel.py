@@ -2,7 +2,7 @@
 import pytest
 from pathlib import Path
 from unittest.mock import patch, call
-from kampo.converters.obabel import (
+from shishin.converters.obabel import (
     convert_pdbqt_to_pdb,
     convert_pdbqt_to_sdf,
 )

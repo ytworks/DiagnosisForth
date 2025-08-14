@@ -2,7 +2,7 @@
 import pytest
 from pathlib import Path
 from unittest.mock import patch, Mock, mock_open
-from kampo.readers.pdb_reader import read_multiframe_pdb
+from shishin.readers.pdb_reader import read_multiframe_pdb
 
 
 class TestReadMultiframePdb:
@@ -19,7 +19,7 @@ ENDMDL
 END
 """)
         
-        with patch('kampo.readers.pdb_reader.Chem.MolFromPDBBlock') as mock_mol_from_pdb:
+        with patch('shishin.readers.pdb_reader.Chem.MolFromPDBBlock') as mock_mol_from_pdb:
             mock_mol = Mock()
             mock_mol_from_pdb.return_value = mock_mol
             
@@ -37,7 +37,7 @@ END
         test_file = temp_dir / "multi_frame.pdb"
         test_file.write_text(sample_multiframe_pdb_content)
         
-        with patch('kampo.readers.pdb_reader.Chem.MolFromPDBBlock') as mock_mol_from_pdb:
+        with patch('shishin.readers.pdb_reader.Chem.MolFromPDBBlock') as mock_mol_from_pdb:
             mock_mol1 = Mock()
             mock_mol2 = Mock()
             mock_mol_from_pdb.side_effect = [mock_mol1, mock_mol2]
@@ -57,7 +57,7 @@ END
         test_file = temp_dir / "empty.pdb"
         test_file.write_text("")
         
-        with patch('kampo.readers.pdb_reader.Chem.MolFromPDBBlock') as mock_mol_from_pdb:
+        with patch('shishin.readers.pdb_reader.Chem.MolFromPDBBlock') as mock_mol_from_pdb:
             # Execute
             result = read_multiframe_pdb(test_file)
             
@@ -74,7 +74,7 @@ ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00 20.00           N
 ENDMDL
 """)
         
-        with patch('kampo.readers.pdb_reader.Chem.MolFromPDBBlock') as mock_mol_from_pdb:
+        with patch('shishin.readers.pdb_reader.Chem.MolFromPDBBlock') as mock_mol_from_pdb:
             mock_mol = Mock()
             mock_mol_from_pdb.return_value = mock_mol
             
@@ -85,7 +85,7 @@ ENDMDL
             assert len(result) == 1
             assert result[0] == mock_mol
     
-    @patch('kampo.readers.pdb_reader.tqdm')
+    @patch('shishin.readers.pdb_reader.tqdm')
     def test_progress_bar_usage(self, mock_tqdm, temp_dir):
         """Test that tqdm progress bar is used."""
         # Create test file
@@ -98,7 +98,7 @@ ENDMDL
         # Setup mock
         mock_tqdm.return_value = test_file.read_text().splitlines(keepends=True)
         
-        with patch('kampo.readers.pdb_reader.Chem.MolFromPDBBlock'):
+        with patch('shishin.readers.pdb_reader.Chem.MolFromPDBBlock'):
             # Execute
             read_multiframe_pdb(test_file)
             

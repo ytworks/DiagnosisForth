@@ -1,6 +1,6 @@
-# Kampo - Drug Discovery Toolkit
+# Shishin - Drug Discovery Toolkit
 
-Kampo is a Python toolkit for drug discovery research, providing protein-ligand interaction analysis, pharmacophore feature extraction, and molecular visualization capabilities.
+Shishin is a Python toolkit for drug discovery research, providing protein-ligand interaction analysis, pharmacophore feature extraction, and molecular visualization capabilities.
 
 ## Features
 
@@ -31,11 +31,11 @@ Kampo is a Python toolkit for drug discovery research, providing protein-ligand 
    conda install -c conda-forge openbabel
    ```
 
-2. **Install Kampo**
+2. **Install Shishin**
    ```bash
    # Clone the repository
-   git clone https://github.com/yourusername/kampo.git
-   cd kampo
+   git clone https://github.com/yourusername/shishin.git
+   cd shishin
    
    # Install with pip
    pip install -e .
@@ -46,10 +46,10 @@ Kampo is a Python toolkit for drug discovery research, providing protein-ligand 
 ### Protein-Ligand Interaction Analysis
 
 ```python
-from kampo.converters.obabel import convert_pdbqt_to_sdf
-from kampo.converters.bp import create_protein_ligand_complex
-from kampo.interactions.analyzer import analyze_protein_ligand_interactions
-from kampo.viewers.utils import visualize_protein_ligand_interactions
+from shishin.converters.obabel import convert_pdbqt_to_sdf
+from shishin.converters.bp import create_protein_ligand_complex
+from shishin.interactions.analyzer import analyze_protein_ligand_interactions
+from shishin.viewers.utils import visualize_protein_ligand_interactions
 
 # Convert PDBQT file to SDF format
 convert_pdbqt_to_sdf("ligand.pdbqt", "ligand.sdf")
@@ -72,8 +72,8 @@ view.show()
 ### Protein-Protein Interaction Analysis
 
 ```python
-from kampo.interactions.analyzer import analyze_protein_protein_interactions
-from kampo.viewers.utils import visualize_protein_protein_interactions
+from shishin.interactions.analyzer import analyze_protein_protein_interactions
+from shishin.viewers.utils import visualize_protein_protein_interactions
 
 # Run PPI analysis
 interface_residues = analyze_protein_protein_interactions(
@@ -95,8 +95,8 @@ view.show()
 ### Pharmacophore Feature Extraction
 
 ```python
-from kampo.interactions.analyzer import extract_pharmacophore_features
-from kampo.viewers.utils import visualize_pharmacophores_from_mol
+from shishin.interactions.analyzer import extract_pharmacophore_features
+from shishin.viewers.utils import visualize_pharmacophores_from_mol
 
 # Extract pharmacophore features from molecule
 mol = Chem.MolFromSmiles("your_smiles_string")
@@ -135,7 +135,7 @@ Main dependencies:
 pytest tests/
 
 # Run with coverage report
-pytest tests/ --cov=kampo
+pytest tests/ --cov=shishin
 ```
 
 ### Code Style
@@ -144,10 +144,10 @@ This project uses Black and Ruff for code formatting and linting:
 
 ```bash
 # Format code
-black kampo/
+black shishin/
 
 # Run linter
-ruff check kampo/
+ruff check shishin/
 ```
 
 ## License

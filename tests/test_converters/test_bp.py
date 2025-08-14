@@ -3,17 +3,17 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch, Mock, MagicMock, mock_open
 import sys
-from kampo.converters.bp import create_protein_ligand_complex
+from shishin.converters.bp import create_protein_ligand_complex
 
 
 class TestCreateProteinLigandComplex:
     """Test create_protein_ligand_complex function."""
     
-    @patch('kampo.converters.bp.Chem.SDMolSupplier')
-    @patch('kampo.converters.bp.PDB.PDBParser')
-    @patch('kampo.converters.bp.Chem.MolToPDBBlock')
+    @patch('shishin.converters.bp.Chem.SDMolSupplier')
+    @patch('shishin.converters.bp.PDB.PDBParser')
+    @patch('shishin.converters.bp.Chem.MolToPDBBlock')
     @patch('builtins.open', new_callable=mock_open)
-    @patch('kampo.converters.bp.PDB.PDBIO')
+    @patch('shishin.converters.bp.PDB.PDBIO')
     def test_successful_complex_creation(
         self, mock_pdbio_class, mock_file, mock_mol_to_pdb, 
         mock_parser_class, mock_supplier_class
@@ -57,7 +57,7 @@ class TestCreateProteinLigandComplex:
         handle.write.assert_any_call('TER\n')
         handle.write.assert_any_call("LIGAND PDB BLOCK")
     
-    @patch('kampo.converters.bp.Chem.SDMolSupplier')
+    @patch('shishin.converters.bp.Chem.SDMolSupplier')
     @patch('builtins.print')
     def test_failed_ligand_reading(self, mock_print, mock_supplier_class):
         """Test handling of failed ligand reading."""

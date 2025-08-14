@@ -1,1 +1,1 @@
-"""Tests for kampo library."""
+"""Tests for shishin library."""

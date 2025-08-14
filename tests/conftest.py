@@ -1,4 +1,4 @@
-"""Pytest configuration and fixtures for kampo tests."""
+"""Pytest configuration and fixtures for shishin tests."""
 import pytest
 from pathlib import Path
 import tempfile

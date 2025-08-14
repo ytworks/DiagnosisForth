@@ -1,4 +1,4 @@
-"""Type definitions for kampo library."""
+"""Type definitions for shishin library."""
 from typing import TypedDict, List, Tuple, Literal, Dict, Any, Optional
 
 # Pharmacophore feature types
