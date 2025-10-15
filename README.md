@@ -1,6 +1,6 @@
-# Shishin - Drug Discovery Toolkit
+# DiagnosisForth - Drug Discovery Toolkit
 
-Shishin is a Python toolkit for drug discovery research, providing protein-ligand interaction analysis, pharmacophore feature extraction, and molecular visualization capabilities.
+DiagnosisForth is a Python toolkit for drug discovery research, providing protein-ligand interaction analysis, pharmacophore feature extraction, and molecular visualization capabilities.
 
 ## Features
 
@@ -31,11 +31,11 @@ Shishin is a Python toolkit for drug discovery research, providing protein-ligan
    conda install -c conda-forge openbabel
    ```
 
-2. **Install Shishin**
+2. **Install DiagnosisForth**
    ```bash
    # Clone the repository
-   git clone https://github.com/yourusername/shishin.git
-   cd shishin
+   git clone https://github.com/yourusername/DiagnosisForth.git
+   cd DiagnosisForth
    
    # Install with pip
    pip install -e .
@@ -46,10 +46,10 @@ Shishin is a Python toolkit for drug discovery research, providing protein-ligan
 ### Protein-Ligand Interaction Analysis
 
 ```python
-from shishin.converters.obabel import convert_pdbqt_to_sdf
-from shishin.converters.bp import create_protein_ligand_complex
-from shishin.interactions.analyzer import analyze_protein_ligand_interactions
-from shishin.viewers.utils import visualize_protein_ligand_interactions
+from DiagnosisForth.converters.obabel import convert_pdbqt_to_sdf
+from DiagnosisForth.converters.bp import create_protein_ligand_complex
+from DiagnosisForth.interactions.analyzer import analyze_protein_ligand_interactions
+from DiagnosisForth.viewers.utils import visualize_protein_ligand_interactions
 
 # Convert PDBQT file to SDF format
 convert_pdbqt_to_sdf("ligand.pdbqt", "ligand.sdf")
@@ -72,8 +72,8 @@ view.show()
 ### Protein-Protein Interaction Analysis
 
 ```python
-from shishin.interactions.analyzer import analyze_protein_protein_interactions
-from shishin.viewers.utils import visualize_protein_protein_interactions
+from DiagnosisForth.interactions.analyzer import analyze_protein_protein_interactions
+from DiagnosisForth.viewers.utils import visualize_protein_protein_interactions
 
 # Run PPI analysis
 interface_residues = analyze_protein_protein_interactions(
@@ -95,8 +95,8 @@ view.show()
 ### Pharmacophore Feature Extraction
 
 ```python
-from shishin.interactions.analyzer import extract_pharmacophore_features
-from shishin.viewers.utils import visualize_pharmacophores_from_mol
+from DiagnosisForth.interactions.analyzer import extract_pharmacophore_features
+from DiagnosisForth.viewers.utils import visualize_pharmacophores_from_mol
 
 # Extract pharmacophore features from molecule
 mol = Chem.MolFromSmiles("your_smiles_string")
@@ -135,7 +135,7 @@ Main dependencies:
 pytest tests/
 
 # Run with coverage report
-pytest tests/ --cov=shishin
+pytest tests/ --cov=DiagnosisForth
 ```
 
 ### Code Style
@@ -144,10 +144,10 @@ This project uses Black and Ruff for code formatting and linting:
 
 ```bash
 # Format code
-black shishin/
+black DiagnosisForth/
 
 # Run linter
-ruff check shishin/
+ruff check DiagnosisForth/
 ```
 
 ## License
