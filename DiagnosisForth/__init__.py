@@ -1,4 +1,4 @@
-"""Shishin - A drug discovery toolkit for molecular interactions and visualization."""
+"""DiagnosisForth - A drug discovery toolkit for molecular interactions and visualization."""
 
 __version__ = "0.0.1"
 
