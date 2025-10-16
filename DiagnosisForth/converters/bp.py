@@ -3,6 +3,7 @@ from typing import Union
 from pathlib import Path
 from rdkit import Chem
 from Bio import PDB
+from DiagnosisForth.utils.logger import log_sdf, log_pdb
 
 
 def create_protein_ligand_complex(ligand_path: Union[str, Path],
@@ -24,6 +25,13 @@ def create_protein_ligand_complex(ligand_path: Union[str, Path],
     if ligand_mol is None:
         print("Error: Couldn't read ligand.")
         sys.exit(1)
+    
+    try:
+        smiles = Chem.MolToSmiles(ligand_mol)
+        log_sdf(str(ligand_path), smiles, "create_protein_ligand_complex")
+        log_pdb(str(protein_path), "create_protein_ligand_complex")
+    except:
+        pass
 
     pdb_parser = PDB.PDBParser(QUIET=True)
     protein_structure = pdb_parser.get_structure('protein', str(protein_path))
