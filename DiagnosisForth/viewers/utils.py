@@ -10,6 +10,7 @@ from rdkit.Chem import AllChem
 from rdkit import RDConfig
 import os
 from pathlib import Path
+from DiagnosisForth.utils.logger import log_pharmacophore, log_pdb
 
 
 pharmacophore_colors: Dict[str, Tuple[int, int, int]] = {
@@ -36,6 +37,11 @@ def visualize_pharmacophore_from_mol(pdb_mol: Mol,
                                     smiles: str = 'O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
                                     ligand_name: str = "LIG") -> Tuple[py3Dmol.view, Dict[str, pd.DataFrame], pd.DataFrame]:
     """Visualize pharmacophore features from an RDKit Mol object."""
+    try:
+        log_pharmacophore(smiles, "visualize_pharmacophore_from_mol")
+    except:
+        pass
+    
     view, complete_dfs = visualize_protein_ligand_interactions_from_mol(pdb_mol, ligand_name)
     temp_file = tempfile.NamedTemporaryFile(
         mode='w+', delete=False, suffix='.pdb')
@@ -76,6 +82,7 @@ def visualize_pharmacophore(pdb_file: Union[str, Path],
                            smiles: str = 'O=C(O)CCCN1CC(Oc2c1cccc2NC(=O)c1ccc(cc1)OCCCCCc1ccccc1)C(=O)O',
                            ligand_name: str = "LIG") -> Tuple[py3Dmol.view, Dict[str, pd.DataFrame], pd.DataFrame]:
     """Visualize pharmacophore features of a ligand."""
+    
     view, complete_dfs = visualize_protein_ligand_interactions(pdb_file, ligand_name)
     ligand_mol = extract_ligand_from_pdb(pdb_file,
                                          smiles=smiles,
@@ -114,6 +121,11 @@ def visualize_protein_protein_interactions(pdb_file_path: Union[str, Path],
                                           highlighted_interactions: Optional[List[str]] = None,
                                           width: int = 900,
                                           height: int = 600) -> Tuple[py3Dmol.view, Dict[str, pd.DataFrame]]:
+    try:
+        log_pdb(str(pdb_file_path), "visualize_protein_protein_interactions")
+    except:
+        pass
+    
     bond_types = ["hydrophobic",
                   "hbond",
                   "waterbridge",
