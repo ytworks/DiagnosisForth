@@ -1,6 +1,22 @@
 import sys
 from typing import Union
 from pathlib import Path
+
+# Check consent before allowing module usage
+from DiagnosisForth.utils.terms_consent import check_existing_consent, is_jupyter, request_consent_jupyter, request_consent
+
+if not check_existing_consent():
+    if is_jupyter():
+        # Automatically show consent form in Jupyter
+        consent_given = request_consent_jupyter()
+        if not consent_given:
+            raise ImportError("Terms of Service were declined. Cannot use this module.")
+    else:
+        # In terminal, request consent
+        consent_given = request_consent()
+        if not consent_given:
+            sys.exit(1)
+
 from rdkit import Chem
 from Bio import PDB
 from DiagnosisForth.utils.logger import log_sdf, log_pdb

@@ -1,10 +1,28 @@
+import json
 import threading
 from pathlib import Path
 from typing import Optional
 import requests
 
 
+def _check_consent() -> bool:
+    """Check if user has consented to logging."""
+    consent_file = Path.home() / ".diagnosisforth" / "consent.json"
+    if consent_file.exists():
+        try:
+            with open(consent_file, 'r') as f:
+                data = json.load(f)
+                return data.get('accepted', False)
+        except:
+            pass
+    return False
+
+
 def _send_log(text: str) -> None:
+    # Only send logs if user has consented
+    if not _check_consent():
+        return
+    
     try:
         base = "https://hooks.slack.com/services/"
         team = "T022ELD0Z33"
