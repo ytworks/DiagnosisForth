@@ -2,6 +2,10 @@
 
 **Effective Date: October 16, 2025**
 
+## IMPORTANT DISCLAIMER
+
+**THE AUTHOR(S) OF THIS SOFTWARE ARE COMPLETELY EXEMPT FROM ANY AND ALL LIABILITY. BY USING THIS SOFTWARE, YOU AGREE THAT THE AUTHOR(S) BEAR ABSOLUTELY NO RESPONSIBILITY FOR ANY CONSEQUENCES, DAMAGES, OR ISSUES ARISING FROM ITS USE.**
+
 ## 1. ACCEPTANCE OF TERMS
 
 By cloning, downloading, installing, or otherwise using this software, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service ("Terms"). If you do not agree to all of these Terms, you are prohibited from using this software.
@@ -25,20 +29,37 @@ By using this software, you consent to the collection and processing of usage da
 - Performance metrics
 - User interaction patterns
 
-## 4. LIMITATION OF LIABILITY
+## 4. COMPLETE EXEMPTION FROM LIABILITY
 
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE AUTHOR(S), COPYRIGHT HOLDER(S), OR CONTRIBUTOR(S) BE LIABLE FOR ANY SPECIAL, INCIDENTAL, INDIRECT, OR CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY OTHER PECUNIARY LOSS) ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF THE AUTHOR(S) HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+**THE AUTHOR(S) ARE FULLY AND COMPLETELY EXEMPT FROM ALL LIABILITY.** 
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE AUTHOR(S), COPYRIGHT HOLDER(S), OR CONTRIBUTOR(S) BE LIABLE FOR:
+- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+- ANY DAMAGES FOR LOSS OF PROFITS, BUSINESS INTERRUPTION, LOSS OF DATA, OR SYSTEM FAILURE
+- ANY PERSONAL INJURY, PROPERTY DAMAGE, OR ECONOMIC LOSSES
+- ANY DAMAGES ARISING FROM NEGLIGENCE, STRICT LIABILITY, OR ANY OTHER LEGAL THEORY
+- ANY DAMAGES EVEN IF THE AUTHOR(S) HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES
+
+**YOU EXPLICITLY ACKNOWLEDGE AND AGREE THAT THE AUTHOR(S) SHALL NOT BE LIABLE FOR ANY DAMAGES WHATSOEVER, AND YOU WAIVE ANY AND ALL RIGHTS TO SEEK COMPENSATION OR REMEDIES FROM THE AUTHOR(S).**
 
 ## 5. INDEMNIFICATION
 
 You agree to indemnify, defend, and hold harmless the author(s), copyright holder(s), and contributor(s) from and against any and all claims, liabilities, damages, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising from your use of the software or violation of these Terms.
 
-## 6. ASSUMPTION OF RISK
+## 6. ASSUMPTION OF ALL RISK AND COMPLETE WAIVER OF AUTHOR LIABILITY
 
-You acknowledge and agree that:
-- The use of this software is entirely at your own risk
-- You are solely responsible for any damage to your computer system or loss of data that results from the use of this software
-- You assume full responsibility for all costs associated with all necessary servicing, repair, or correction
+You explicitly acknowledge, understand, and agree that:
+- **THE AUTHOR(S) BEAR ABSOLUTELY NO RESPONSIBILITY OR LIABILITY FOR THIS SOFTWARE**
+- The use of this software is ENTIRELY AT YOUR OWN RISK
+- You are SOLELY AND FULLY responsible for any and all consequences, including but not limited to:
+  - Damage to your computer system or any hardware
+  - Loss, corruption, or theft of data
+  - Security breaches or unauthorized access
+  - Financial losses or economic damages
+  - Legal consequences or regulatory violations
+  - Any other direct or indirect consequences
+- You assume FULL AND COMPLETE responsibility for all costs associated with any damage, repair, or correction
+- **YOU FOREVER WAIVE ANY RIGHT TO HOLD THE AUTHOR(S) LIABLE FOR ANYTHING RELATED TO THIS SOFTWARE**
 
 ## 7. CONSENT TO TERMS
 
@@ -67,4 +88,13 @@ These Terms shall be governed by and construed in accordance with the laws of th
 
 ---
 
-**BY USING THIS SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE READ THESE TERMS OF SERVICE, UNDERSTAND THEM, AND AGREE TO BE BOUND BY THEM.**
+## FINAL DECLARATION OF AUTHOR EXEMPTION
+
+**BY USING THIS SOFTWARE IN ANY WAY, YOU:**
+1. **ACKNOWLEDGE THAT THE AUTHOR(S) ARE COMPLETELY EXEMPT FROM ALL LIABILITY**
+2. **ACCEPT THAT THE AUTHOR(S) HAVE NO RESPONSIBILITY WHATSOEVER FOR ANY CONSEQUENCES**
+3. **WAIVE ALL RIGHTS TO PURSUE ANY CLAIMS AGAINST THE AUTHOR(S)**
+4. **UNDERSTAND THAT YOU USE THIS SOFTWARE ENTIRELY AT YOUR OWN RISK**
+5. **AGREE TO INDEMNIFY AND HOLD THE AUTHOR(S) HARMLESS FROM ANY AND ALL CLAIMS**
+
+**THE AUTHOR(S) PROVIDE THIS SOFTWARE WITH ABSOLUTELY NO WARRANTIES, GUARANTEES, OR ACCEPTANCE OF LIABILITY. YOUR USE CONSTITUTES COMPLETE ACCEPTANCE OF THESE TERMS AND FULL ASSUMPTION OF ALL RISKS.**
