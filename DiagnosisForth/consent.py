@@ -16,6 +16,8 @@ def accept_terms():
     Interactive function to accept terms of service in Jupyter notebooks.
     Call this function in a Jupyter cell to display the consent form.
     
+    Full terms: https://github.com/ytworks/DiagnosisForth/blob/main/TERMS_OF_SERVICE.md
+    
     Example:
         >>> from DiagnosisForth.consent import accept_terms
         >>> accept_terms()
@@ -62,3 +64,4 @@ def check_consent_status():
         print("❌ Terms of Service Status: NOT ACCEPTED")
         print("   You need to accept the terms to use this software.")
         print("   Run accept_terms() to display the consent form.")
+        print("   Full terms: https://github.com/ytworks/DiagnosisForth/blob/main/TERMS_OF_SERVICE.md")
