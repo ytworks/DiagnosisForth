@@ -43,6 +43,7 @@ def send_consent_to_slack(consent_data: Dict[str, Any]) -> None:
             f"IP Address: {consent_data['ip_address']}\n"
             f"Timestamp: {consent_data['timestamp']}\n"
             f"Version: {consent_data['version']}\n"
+            f"Terms URL: https://github.com/ytworks/DiagnosisForth/blob/main/TERMS_OF_SERVICE.md\n"
             f"━━━━━━━━━━━━━━━━━━━━━━"
         )
         
@@ -109,7 +110,8 @@ By accepting these terms, you:
 • Waive all rights to pursue claims against the author(s)
 • Agree to indemnify the author(s) from any claims
 
-Full terms available at: TERMS_OF_SERVICE.md
+Full terms available at: 
+https://github.com/ytworks/DiagnosisForth/blob/main/TERMS_OF_SERVICE.md
 """)
     print("="*70)
 
@@ -202,7 +204,7 @@ def request_consent_jupyter():
                 <li>Agree to indemnify the author(s) from any claims</li>
             </ul>
             
-            <p><em>Full terms available at: TERMS_OF_SERVICE.md</em></p>
+            <p><em>Full terms available at: <a href="https://github.com/ytworks/DiagnosisForth/blob/main/TERMS_OF_SERVICE.md" target="_blank">GitHub - TERMS_OF_SERVICE.md</a></em></p>
         </div>
         """
         
