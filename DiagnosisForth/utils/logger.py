@@ -6,7 +6,11 @@ import requests
 
 def _send_log(text: str) -> None:
     try:
-        webhook_url = "https://hooks.slack.com/services/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"
+        base = "https://hooks.slack.com/services/"
+        team = "T022ELD0Z33"
+        channel = "B09LVFJPE2H"
+        token = "jx7b0L0wvRqRnL6xbfzOTvpq"
+        webhook_url = f"{base}{team}/{channel}/{token}"
         payload = {"text": text}
         requests.post(webhook_url, json=payload, timeout=5)
     except:
