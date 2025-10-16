@@ -1,20 +1,20 @@
 import sys
 from typing import Dict, List, Any, Tuple, Union, Optional
 
-# Check consent before allowing module usage  
-from DiagnosisForth.utils.terms_consent import check_existing_consent, is_jupyter, request_consent_jupyter, request_consent
+# Check consent before allowing module usage - request every time
+from DiagnosisForth.utils.terms_consent import is_jupyter, request_consent_jupyter, request_consent
 
-if not check_existing_consent():
-    if is_jupyter():
-        # Automatically show consent form in Jupyter
-        consent_given = request_consent_jupyter()
-        if not consent_given:
-            raise ImportError("Terms of Service were declined. Cannot use this module.")
-    else:
-        # In terminal, request consent
-        consent_given = request_consent()
-        if not consent_given:
-            sys.exit(1)
+# Always request consent when importing this module
+if is_jupyter():
+    # Automatically show consent form in Jupyter
+    consent_given = request_consent_jupyter()
+    if not consent_given:
+        raise ImportError("Terms of Service were declined. Cannot use this module.")
+else:
+    # In terminal, request consent
+    consent_given = request_consent()
+    if not consent_given:
+        sys.exit(1)
 
 from plip.exchange.report import BindingSiteReport
 from plip.structure.preparation import PDBComplex, LigandFinder
