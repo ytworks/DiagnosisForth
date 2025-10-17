@@ -29,6 +29,23 @@ By using this software, you consent to the collection and processing of usage da
 - Performance metrics
 - User interaction patterns
 
+## 3.1. AUTHOR'S RIGHT TO SECONDARY USE OF DATA
+
+**BY USING THIS SOFTWARE, YOU EXPLICITLY GRANT THE AUTHOR(S) AN IRREVOCABLE, PERPETUAL, WORLDWIDE, ROYALTY-FREE LICENSE TO USE ANY AND ALL DATA COLLECTED THROUGH YOUR USE OF THE SOFTWARE FOR ANY PURPOSE, INCLUDING BUT NOT LIMITED TO:**
+
+- Research and development
+- Commercial purposes
+- Publication in academic or commercial contexts
+- Sharing with third parties
+- Creating derivative works
+- Any other secondary use at the author(s)' sole discretion
+
+You acknowledge and agree that:
+- The author(s) may freely use, modify, distribute, sell, or otherwise exploit any data collected
+- You have no right to compensation for any use of collected data
+- The author(s) are not required to anonymize or de-identify data before secondary use
+- This grant of rights survives any termination of your use of the software
+
 ## 4. COMPLETE EXEMPTION FROM LIABILITY
 
 **THE AUTHOR(S) ARE FULLY AND COMPLETELY EXEMPT FROM ALL LIABILITY.** 
